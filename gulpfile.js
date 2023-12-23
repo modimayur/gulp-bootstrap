@@ -14,7 +14,8 @@ const sourcemaps = require("gulp-sourcemaps");
 const postcss = require('gulp-postcss');
 const cleanCSS = require('gulp-clean-css');
 const autoprefixer = require("gulp-autoprefixer");
-const sass = require('gulp-sass')(require('sass'));
+const scss = require('gulp-sass')(require('sass'));
+
 
 
 
@@ -74,10 +75,10 @@ const paths = {
             files: './src/assets/css/**/*',
             main: './src/assets/css/*.css'
         },
-        sass: {
-            dir: './src/assets/sass',
-            files: './src/assets/sass/**/*',
-            main: './src/assets/sass/*.sass'
+        scss: {
+            dir: './src/assets/scss',
+            files: './src/assets/scss/**/*',
+            main: './src/assets/scss/*.scss'
         }
     }
 };
@@ -90,22 +91,32 @@ gulp.task('browsersync', function (callback) {
     });
     callback();
 });
-gulp.task('sass', function () {
-    // generate tailwind css  
+// SCSS
+gulp.task("scss", function () {
     return gulp
-        .src('./sass/**/*.scss')
-        .pipe(sourcemaps.init())
-        .pipe(sass().on('error', sass.logError))
-        .pipe(sourcemaps.write('./maps'))
-        .pipe(gulp.dest('./css'));
-});
+      .src(paths.src.scss.main)
+      .pipe(sourcemaps.init())
+      .pipe(
+        scss({
+          outputStyle: "expanded",
+        }).on("error", scss.logError)
+      )
+      .pipe(autoprefixer())
+      .pipe(sourcemaps.write("/"))      
+      .pipe(gulp.dest(paths.dist.css.dir));
+     
+  });
+
+
+
+
 gulp.task('browsersyncReload', function (callback) {
     browsersync.reload();
     callback();
 });
 
 gulp.task('watch', function () {
-    gulp.watch([paths.src.sass.files,paths.src.css.files, paths.src.html.files], gulp.series(['html', 'sass', 'css'], 'browsersyncReload'));
+    gulp.watch([paths.src.scss.files,paths.src.css.files, paths.src.html.files], gulp.series(['html', 'scss', 'css'], 'browsersyncReload'));
     gulp.watch([paths.src.js.dir], gulp.series('js', 'browsersyncReload'));
     gulp.watch([paths.src.js.pages], gulp.series('jsPages', 'browsersyncReload'));
     gulp.watch([paths.src.html.files, paths.src.partials.files], gulp.series('fileinclude', 'browsersyncReload'));
@@ -177,6 +188,8 @@ gulp.task('copy:all', function () {
             paths.src.base.files,
             '!' + paths.src.partials.dir, '!' + paths.src.partials.files,
             '!' + paths.src.css.dir, '!' + paths.src.css.files,
+            '!**/plugin/**',
+            '!' + paths.src.scss.dir, '!' + paths.src.scss.files,
             '!' + paths.src.js.dir, '!' + paths.src.js.files, '!' + paths.src.js.main,
             '!' + paths.src.html.files,
         ])
@@ -213,6 +226,6 @@ gulp.task('html', function () {
         .pipe(gulp.dest(paths.dist.base.dir));
 });
 
-gulp.task('build', gulp.series(gulp.parallel('clean:packageLock', 'clean:dist', 'copy:all', 'copy:libs', 'fileinclude', 'sass', 'css', 'js', 'jsPages', 'html')));
-
-gulp.task('default', gulp.series(gulp.parallel('clean:packageLock', 'clean:dist', 'copy:all', 'copy:libs', 'fileinclude', 'sass', 'css', 'js', 'jsPages', 'html'), gulp.parallel('browsersync', 'watch')));
+gulp.task('clean', gulp.series(gulp.parallel('clean:dist')));
+gulp.task('build', gulp.series(gulp.parallel('clean:packageLock', 'clean:dist', 'copy:all', 'fileinclude', 'scss', 'js', 'jsPages', 'html')));
+gulp.task('default', gulp.series(gulp.parallel('clean:packageLock', 'clean:dist', 'copy:all', 'fileinclude', 'scss', 'js', 'jsPages', 'html'), gulp.parallel('browsersync', 'watch')));

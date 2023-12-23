@@ -1,0 +1,42 @@
+// Import all of Bootstrap's CSS
+// scss-docs-start color-variables
+
+$black: #000;
+$blue: #42A5F5;
+$cyan: #00BCD4;
+$gray-100: #E8ECF4;
+$green: #66BB6A;
+$indigo: #3730a3;
+$lightgreen: #8BC34A;
+$orange: #FF7043;
+$pink: #EC407A;
+$purple: #7E57C2;
+$red: #DC3545;
+$teal: #26A69A;
+$yellow: #FFB300;
+$violet: #AB47BC;
+$bluegrey: #78909C;
+$brown: #8D6E63;
+$darkgray: #1E232C;
+$white: #fff;
+
+
+
+$primary: $indigo;
+$secondary: $pink;
+$success: $green;
+$info: $cyan;
+$warning: $yellow;
+$danger: $red;
+$light: $gray-100;
+$dark: $darkgray;
+
+
+$headings-color: $dark;
+
+$body-color:$black;
+$container-padding-x: 48px;
+$body-color-dark: $white;
+
+
+@import "bootstrap/bootstrap.scss";
